@@ -1,0 +1,42 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the paper below and this repository."
+title: "RECs Techno-Economic Feasibility and Operational Validation"
+version: 1.0.0
+date-released: 2026-10-09
+license: MIT
+repository-code: "https://github.com/LorenzoGiannuzzo/RECs_Techno-Economic_Feasibility_and_Operational_Validation"
+authors:
+  - family-names: Giannuzzo
+    given-names: Lorenzo
+    email: lorenzo.giannuzzo@polito.it
+    affiliation: "Energy Center Lab and Department of Energy (DENERG), Politecnico di Torino"
+  - family-names: Aretano
+    given-names: Francesco
+    affiliation: "Energy Center Lab and Department of Energy (DENERG), Politecnico di Torino"
+  - family-names: Minuto
+    given-names: Francesco Demetrio
+    affiliation: "Energy Center Lab and Department of Energy (DENERG), Politecnico di Torino"
+  - family-names: Lanzini
+    given-names: Andrea
+    affiliation: "Energy Center Lab and Department of Energy (DENERG), Politecnico di Torino"
+keywords:
+  - renewable energy community
+  - battery energy storage
+  - MILP
+  - load forecasting
+  - explainable artificial intelligence
+preferred-citation:
+  type: article
+  title: "Techno-Economic Feasibility and Operational Assessment of a Renewable Energy Community in Southern Italy: From Simulation to Machine Learning-Driven Operation"
+  authors:
+    - family-names: Giannuzzo
+      given-names: Lorenzo
+    - family-names: Aretano
+      given-names: Francesco
+    - family-names: Minuto
+      given-names: Francesco Demetrio
+    - family-names: Lanzini
+      given-names: Andrea
+  journal: "Sustainable Energy Technologies and Assessments"
+  year: 2026
+  notes: "Manuscript SETA-D-26-06491, under review."

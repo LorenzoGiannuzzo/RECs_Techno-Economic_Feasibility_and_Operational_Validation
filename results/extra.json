@@ -1,0 +1,26 @@
+{
+ "random_split_r2_test": 0.7917182632531815,
+ "random_split_r2_train": 0.8150011525305623,
+ "milp24_time_mean_s": 0.08582490682601929,
+ "milp24_time_max_s": 0.0924067497253418,
+ "week_rev_gap_pct": 0.9493443974602697,
+ "aug_weekly_gaps": [
+  0.54,
+  0.73,
+  0.95,
+  0.39,
+  0.11
+ ],
+ "rid_inc_y1": 14979.884156800952,
+ "rid_inc_pv": 192178.02250786763,
+ "extra_opex_pv": 54225.402116421064,
+ "burden": 320225.4021164211,
+ "cpu": "Intel64 Family 6 Model 186 Stepping 3, GenuineIntel",
+ "p125_share": 23.00228310502283,
+ "p125_pct": 76.99771689497716,
+ "eve85_share": 97.03196347031964,
+ "q75": 122.76,
+ "q_eve_25": 104.1325,
+ "eve_median": 119.645,
+ "day_median": 103.515
+}

@@ -1,0 +1,9 @@
+# Exact versions used to produce the published results (Python 3.13).
+# Compatible ranges are declared in pyproject.toml.
+numpy==2.5.3
+pandas==3.0.5
+scipy==1.18.1
+scikit-learn==1.9.1
+pulp==2.9.0
+shap==0.52.0
+matplotlib==3.11.2

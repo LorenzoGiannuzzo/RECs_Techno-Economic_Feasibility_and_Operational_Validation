@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rec-pipeline"
+version = "1.0.0"
+description = "Techno-economic feasibility and operational assessment of a Renewable Energy Community in southern Italy: dispatch strategies, MILP, financial analysis, and machine-learning-driven EMS."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+authors = [
+  { name = "Lorenzo Giannuzzo", email = "lorenzo.giannuzzo@polito.it" },
+  { name = "Francesco Aretano" },
+  { name = "Francesco Demetrio Minuto" },
+  { name = "Andrea Lanzini" },
+]
+keywords = ["renewable energy community", "MILP", "battery energy storage", "load forecasting", "SHAP", "CACER"]
+dependencies = [
+  "numpy>=1.26",
+  "pandas>=2.1",
+  "scipy>=1.11",
+  "scikit-learn>=1.4",
+  "pulp>=2.7,<3",
+  "shap>=0.44",
+  "matplotlib>=3.8",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[project.scripts]
+rec-pipeline = "rec_pipeline.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

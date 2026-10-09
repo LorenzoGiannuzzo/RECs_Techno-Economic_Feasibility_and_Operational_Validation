@@ -1,0 +1,54 @@
+# -----------------------------------------------------------------------------
+# Archives: never commit compressed copies of the repository or of the data
+# -----------------------------------------------------------------------------
+*.zip
+*.7z
+*.rar
+*.tar
+*.tar.gz
+*.tgz
+
+# -----------------------------------------------------------------------------
+# Confidential metered consumption data (not distributed, see data/README.md)
+# -----------------------------------------------------------------------------
+data/confidential/*
+!data/confidential/README.md
+
+# Synthetic stand-in data and outputs of the synthetic runs (regenerated on demand)
+data/synthetic/
+results_synthetic/
+figures_synthetic/
+
+# Hourly intermediate outputs: they contain, or are derived from, the metered loads
+results/*.npz
+
+# Data files of the legacy thesis scripts (not distributed)
+legacy/**/*.xlsx
+legacy/**/*.xls
+legacy/**/*.csv
+legacy/**/*.mat
+
+# -----------------------------------------------------------------------------
+# Python
+# -----------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.eggs/
+.pytest_cache/
+.ipynb_checkpoints/
+.venv/
+venv/
+env/
+
+# -----------------------------------------------------------------------------
+# Editors and operating systems
+# -----------------------------------------------------------------------------
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
