@@ -53,6 +53,7 @@ derived from, the metered loads.
 | Eqs. 21–22 – PV degradation and linear capacity fade of the battery; the dispatch is recomputed for each of the 20 years | `design.run.yearly_rid` |
 | Table 6, Fig. 5 – financial indicators and discounted cash flow | `R["dcf"]` |
 | Fig. 6 – sensitivity to the BESS cost (150–550 €/kWh) and break-even cost | `R["sens"]`, `R["breakeven_cost"]` |
+| Sections 2.3, 4.2 – sensitivity to the level of the zonal prices (−20% and +20%), with the incentive tariff and the dispatch recomputed for every year | `R["price_sens"]` |
 | Eqs. 23–31, Table 7 – three-phase CACER allocation with the 55% threshold | `R["alloc"]` |
 | Eq. 46 – shared-to-injected energy ratio | `R["scenarios"][*]["rho"]` |
 
@@ -65,9 +66,9 @@ by the solver equals the hourly minimum of Eq. 1 and that charging and dischargi
 | Paper | Implementation |
 |---|---|
 | Daily profiles normalized by their maximum, hierarchical clustering with Ward linkage and Euclidean distance | `clustering.run` |
-| Eqs. 43–44 – Silhouette and Davies–Bouldin indices for k = 3–15 | `R["validity"]` |
+| Eqs. 43–44 – Silhouette and Davies–Bouldin indices for K = 2–15 (K = 2 only separates the summer days; K = 3 is the best partition with at least three clusters) | `R["validity"]` |
 | Fig. 7 – three demand archetypes and intra-cluster RMSE | `R["clusters"]`, `figures.py` |
-| Eq. 32 – random forest (100 trees, minimum 5 samples per leaf, 80/20 random split of the days) on daily temperatures and day of the week | `R["classifier"]` |
+| Eq. 32 – random forest (100 trees, minimum 5 samples per leaf, 80/20 random split of the days) on daily temperatures and day of the week; five-fold cross-validation with the days of each archetype in chronological order | `R["classifier"]` |
 | End-to-end RMSE between the real profile and the centroid of the predicted class | `R["classifier"]["end_to_end_rmse"]` |
 | Table 8 – Gini importance of the classifier features | `R["feature_importance"]` |
 
@@ -79,7 +80,7 @@ drives the dispatch.
 | Paper | Implementation |
 |---|---|
 | Eqs. 34–37 – day-ahead inputs: cyclic hour and day of the week, non-working-day indicator, outdoor temperature and its change over 24 h, load 24, 48, and 168 h before normalized by the mean load of the previous day; target: ratio to the previous-day mean | `forecasting.build` |
-| Eq. 38 – MLP 10-256-128-64-1, ReLU, Adam, L2 penalty 1e-3, early stopping | `forecasting.make_mlp` |
+| Eq. 38 – MLP 10-256-128-64-1, ReLU, Adam, L2 penalty 1e-3, early stopping (patience 20, at most 400 epochs) on the last 10% of the training window in chronological order | `forecasting.make_mlp`, `forecasting.fit_chrono` |
 | Rolling-origin validation with expanding window and monthly retraining (January–September 2025 out-of-sample) | `operation.run` |
 | Eqs. 39–41 – R², RMSE, MAPE; naive benchmarks (previous day, previous week) | `R["mlp_oos"]`, `R["naive24_res_oos"]`, `R["naive_res_oos"]` |
 | Eq. 42 – peak-timing error of the MLP and of the previous-day persistence | `R["peak_timing"]`, `R["peak_timing_evening"]`, `R["peak_timing_naive24"]` |

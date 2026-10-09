@@ -7,7 +7,7 @@ import pandas as pd
 from scipy.optimize import brentq
 
 from . import config as C
-from .data import NON_BUSINESS
+from .data import NON_BUSINESS, tip_tariff
 from .models import econ, milp, rule
 
 
@@ -71,7 +71,7 @@ def run(inp, paths, log=print):
     # of the battery driven by the energy throughput; the dispatch is recomputed for every year (Eqs. 18-22, Table 6)
     log(">>> Discounted cash flow")
 
-    def yearly_rid(name, degrade=True):
+    def yearly_rid(name, degrade=True, PZ=PZ, TIP=TIP):
         soh, res, cyc_cum = 1.0, [], 0.0
         for y in range(1, C.N_YEARS + 1):
             pv_y = PV * ((1 - C.PV_DEG) ** (y - 1) if degrade else 1.0)
@@ -119,6 +119,18 @@ def run(inp, paths, log=print):
         d_ = R["dcf"][name]
         log(f"    {name}: NPV {d_['npv']:.0f} €, IRR {d_['irr']:.1f}%, PBP {d_['pbp']:.2f} years")
     R["yearly"] = YR
+    #Lorenzo Giannuzzo: sensitivity of the investment indicators to the level of the zonal prices: all the hourly
+    # prices are scaled by the same factor, the incentive tariff and the dispatch are recomputed for every year of the
+    # horizon
+    log(">>> Zonal-price sensitivity")
+    R["price_sens"] = {}
+    for f in C.PRICE_SENS:
+        pz_f = PZ * f; tip_f = tip_tariff(pz_f); R["price_sens"][str(f)] = {}
+        for name in ["No-BESS", "Self-consumption", "Arbitrage", "MILP"]:
+            rids = [y["rid"] for y in yearly_rid(name, True, pz_f, tip_f)]
+            R["price_sens"][str(f)][name] = {k: v for k, v in dcf(rids, 0 if name == "No-BESS" else 1, C.C_BESS).items()
+                                             if k != "cum"}
+        log(f"    prices x{f}: " + ", ".join(f"{k} NPV {v['npv']:.0f} €" for k, v in R["price_sens"][str(f)].items()))
     #Lorenzo Giannuzzo: break-even BESS cost of MILP against the no-BESS baseline (the NPV is linear in the unit cost)
     npv0 = R["dcf"]["No-BESS"]["npv"]
     a, b = R["sens"]["MILP"][C.SENS_COSTS[0]]["npv"], R["sens"]["MILP"][C.SENS_COSTS[1]]["npv"]

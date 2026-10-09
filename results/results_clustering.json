@@ -1,5 +1,9 @@
 {
  "validity": {
+  "2": {
+   "silhouette": 0.40039704698200584,
+   "davies_bouldin": 1.0310563936101007
+  },
   "3": {
    "silhouette": 0.30040405994258995,
    "davies_bouldin": 1.3324322942318398
@@ -13,7 +17,7 @@
    "davies_bouldin": 2.1490167080209845
   },
   "6": {
-   "silhouette": 0.1386711130367517,
+   "silhouette": 0.13867111303675173,
    "davies_bouldin": 1.9928739269462428
   },
   "7": {
@@ -33,24 +37,24 @@
    "davies_bouldin": 2.0417910040981946
   },
   "11": {
-   "silhouette": 0.084968472784344,
+   "silhouette": 0.08496847278434398,
    "davies_bouldin": 2.0460059843988656
   },
   "12": {
    "silhouette": 0.08352253502354881,
-   "davies_bouldin": 2.0306176687151574
+   "davies_bouldin": 2.0306176687151622
   },
   "13": {
-   "silhouette": 0.08314777069465276,
-   "davies_bouldin": 2.0801998402850854
+   "silhouette": 0.08314777069465273,
+   "davies_bouldin": 2.0801998402850903
   },
   "14": {
    "silhouette": 0.08451207830110523,
-   "davies_bouldin": 2.0594845943218933
+   "davies_bouldin": 2.059484594321892
   },
   "15": {
-   "silhouette": 0.08189802563770984,
-   "davies_bouldin": 2.0383291803322656
+   "silhouette": 0.08189802563770981,
+   "davies_bouldin": 2.0383291803322647
   }
  },
  "clusters": {

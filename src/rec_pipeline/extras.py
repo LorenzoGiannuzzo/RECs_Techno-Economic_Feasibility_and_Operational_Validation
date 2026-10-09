@@ -10,7 +10,7 @@ from sklearn.metrics import r2_score
 from sklearn.model_selection import train_test_split
 
 from . import config as C
-from .forecasting import build, make_mlp
+from .forecasting import build, fit_chrono
 from .models import milp
 
 
@@ -35,7 +35,7 @@ def run(inp, paths, log=print):
     idx_tr, idx_te = train_test_split(ok, test_size=0.3, random_state=C.SEED)
     mu, sd = F.X[idx_tr].mean(0), F.X[idx_tr].std(0) + 1e-9; Xs = (F.X - mu) / sd
     rm, rs = F.r[idx_tr].mean(), F.r[idx_tr].std()
-    mlp = make_mlp().fit(Xs[idx_tr], (F.r[idx_tr] - rm) / rs)
+    mlp = fit_chrono(Xs[idx_tr], (F.r[idx_tr] - rm) / rs)
     fc = lambda i: (mlp.predict(Xs[i]) * rs + rm) * F.day_mean[i]
     X["random_split_r2_test"] = float(r2_score(F.y[idx_te], fc(idx_te)))
     X["random_split_r2_train"] = float(r2_score(F.y[idx_tr], fc(idx_tr)))

@@ -50,7 +50,33 @@ def build(inp):
 
 
 def make_mlp():
-    """MLP regressor of Section 2.4 (architecture 10-256-128-64-1, Adam, L2 penalty 1e-3, early stopping)."""
+    """MLP regressor of Section 2.4 (architecture 10-256-128-64-1, Adam, L2 penalty 1e-3); early stopping is handled
+    by fit_chrono on a chronological validation set."""
     return MLPRegressor(hidden_layer_sizes=(256, 128, 64), activation="relu", solver="adam", alpha=1e-3,
-                        learning_rate_init=1e-3, max_iter=400, early_stopping=True, validation_fraction=0.1,
-                        n_iter_no_change=20, random_state=C.SEED)
+                        learning_rate_init=1e-3, random_state=C.SEED)
+
+
+def fit_chrono(X, y, val_fraction=0.1, max_epochs=400, patience=20, tol=1e-4):
+    """Training with early stopping on the last part of the training window, in chronological order.
+
+    The rows of X are in time order: the first (1 - val_fraction) of them train the network, the remaining ones form
+    the validation set; training stops after `patience` epochs without an improvement of the validation loss larger
+    than `tol`, and the weights of the best epoch are restored.
+    """
+    k = int(round(len(y) * (1 - val_fraction)))
+    Xt, yt, Xv, yv = X[:k], y[:k], X[k:], y[k:]
+    mlp = make_mlp()
+    best, best_loss, wait, best_ep = None, np.inf, 0, 0
+    for ep in range(max_epochs):
+        mlp.partial_fit(Xt, yt)
+        loss = float(np.mean((mlp.predict(Xv) - yv) ** 2))
+        if loss < best_loss - tol:
+            best_loss, wait, best_ep = loss, 0, ep + 1
+            best = ([w.copy() for w in mlp.coefs_], [b.copy() for b in mlp.intercepts_])
+        else:
+            wait += 1
+            if wait >= patience:
+                break
+    mlp.coefs_, mlp.intercepts_ = best
+    mlp.best_epoch_ = best_ep
+    return mlp

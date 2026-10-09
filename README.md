@@ -117,7 +117,7 @@ A complete map between the code and the equations, tables, and figures of the pa
 | Step | What it does | Paper |
 |---|---|---|
 | 0 – data | Validates the inputs, interpolates the hour skipped by the daylight-saving change, maps the measurement campaign (October 2024 – September 2025) onto the simulated year 2025 preserving the day of the week, and computes the incentive tariff | Sections 2.1, 3.1 |
-| 1 – design | Simulates the four dispatch strategies, solves the annual MILP (52 560 variables, 8760 binary), computes NPV, IRR, and payback with PV and battery degradation over 20 years, the sensitivity to the BESS cost, the break-even cost, and the three-phase CACER allocation with the 55% threshold | Sections 2.1–2.3, 3.2, 4.1, 4.2; Tables 3–7; Figs. 3–6 |
+| 1 – design | Simulates the four dispatch strategies, solves the annual MILP (52 560 variables, 8760 binary), computes NPV, IRR, and payback with PV and battery degradation over 20 years, the sensitivity to the BESS cost and to the level of the zonal prices, the break-even cost, and the three-phase CACER allocation with the 55% threshold | Sections 2.1–2.3, 3.2, 4.1, 4.2; Tables 3–7; Figs. 3–6 |
 | 2 – clustering | Clusters the normalized daily residential profiles (Ward linkage, k selected by Silhouette and Davies–Bouldin indices) and trains the random forest day-type classifier on temperature and calendar features | Sections 2.4, 4.3; Table 8; Fig. 7 |
 | 3 – operation | Trains the day-ahead MLP forecaster with a rolling-origin validation (monthly retraining, January–September 2025 out-of-sample), compares it with naive predictors, computes the peak-timing error and the out-of-sample SHAP values, and runs the EMS robustness test (perfect-foresight MILP vs forecast-based plans applied open-loop) | Sections 2.4, 2.5, 4.3, 4.4; Tables 9–10; Figs. 8–10 |
 | 4 – extras | Random-split benchmark of the forecaster, solve time of the 24-hour MILP, critical-week revenue gap, present value of the MILP revenue increment, price statistics | Sections 2.2, 4.3, 4.4, 5.3 |
@@ -144,8 +144,8 @@ writes synthetic files with the same format.
 
 | File | Content |
 |---|---|
-| `results/results_design.json` | input totals, Table 3, scenarios (Tables 4–5), MILP size and checks, DCF with and without degradation (Table 6), sensitivity and break-even cost, yearly results, allocation (Table 7) |
-| `results/results_clustering.json` | validity indices for k = 3–15, cluster sizes, RMSE and composition, classifier metrics, feature importance (Table 8) |
+| `results/results_design.json` | input totals, Table 3, scenarios (Tables 4–5), MILP size and checks, DCF with and without degradation (Table 6), sensitivity to the BESS cost and to the price level, break-even cost, yearly results, allocation (Table 7) |
+| `results/results_clustering.json` | validity indices for K = 2–15, cluster sizes, RMSE and composition, classifier metrics, feature importance (Table 8) |
 | `results/results_ops.json` | rolling-origin folds, out-of-sample metrics and benchmarks, peak-timing error, SHAP importance (Table 9), robustness test (Table 10) |
 | `results/extra.json` | complementary quantities quoted in the text |
 | `results/critical_week.json` | week shown in Fig. 10 |

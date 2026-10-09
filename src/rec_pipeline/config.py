@@ -80,6 +80,7 @@ P_DC = 1037.0
 C_PV = 800.0
 C_BESS = 350.0
 SENS_COSTS = [150, 250, 350, 450, 550]
+PRICE_SENS = [0.8, 1.2]  # scaling factors of the zonal prices in the price sensitivity
 OPEX_PCT = 1.5
 RATE = 0.04
 N_YEARS = 20
@@ -93,5 +94,5 @@ N_HOUSEHOLDS = 781
 # community (Section 3.1), number of clusters and range explored by the validity indices, and random seed
 K_SCALE = 33.96
 CLUSTER_K = 3
-CLUSTER_K_RANGE = range(3, 16)
+CLUSTER_K_RANGE = range(2, 16)
 SEED = 42

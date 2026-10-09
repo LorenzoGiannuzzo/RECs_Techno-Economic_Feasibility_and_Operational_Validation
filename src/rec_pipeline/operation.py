@@ -9,7 +9,7 @@ import shap
 from sklearn.metrics import r2_score
 
 from . import config as C
-from .forecasting import FEATURES, build, make_mlp
+from .forecasting import FEATURES, build, fit_chrono
 from .models import econ, milp, realize
 
 NON_RES = ["Public administration", "Industrial", "Street lighting"]
@@ -38,15 +38,14 @@ def run(inp, paths, log=print):
         mu, sd = X_raw[tr].mean(0), X_raw[tr].std(0) + 1e-9
         X = (X_raw - mu) / sd
         rm, rs = r_raw[tr].mean(), r_raw[tr].std()
-        mlp = make_mlp()
-        t0 = time.time(); mlp.fit(X[tr], (r_raw[tr] - rm) / rs); dt = time.time() - t0
+        t0 = time.time(); mlp = fit_chrono(X[tr], (r_raw[tr] - rm) / rs); dt = time.time() - t0
 
         def ratio(Z, mlp=mlp, rm=rm, rs=rs):
             return mlp.predict(Z) * rs + rm
 
         pred[te] = ratio(X[te]) * day_mean[te]
         fold_info.append(dict(month=str(per), n_train=int(tr.sum()), n_test=int(te.sum()), train_time_s=dt,
-                              epochs=int(mlp.n_iter_),
+                              epochs=int(mlp.best_epoch_),
                               r2_train=float(r2_score(y_raw[tr], ratio(X[tr]) * day_mean[tr])),
                               r2_test=float(r2_score(y_raw[te], pred[te]))))
         #Lorenzo Giannuzzo: kernel SHAP of the predicted ratio on 34 out-of-sample hours of the fold; since the mean
