@@ -26,7 +26,6 @@ NON_BUSINESS = ["Residential", "Public administration", "Street lighting"]
 class DataError(RuntimeError):
     pass
 
-
 def _read_hourly(folder, name, columns, start):
     path = Path(folder) / name
     if not path.exists():
