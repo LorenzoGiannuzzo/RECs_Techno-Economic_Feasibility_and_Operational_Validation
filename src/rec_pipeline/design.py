@@ -129,13 +129,14 @@ def run(inp, paths, log=print):
     R["opex_cov"] = dict(opex_milp=opex_bess, rid_min_year=min(y["rid"] for y in YR["MILP"]),
                          price_threshold=opex_bess / (SC["MILP"]["inj_MWh"]))
 
-    #Lorenzo Giannuzzo: three-phase CACER allocation of the MILP revenue, with the surplus above the 55% threshold
-    # reserved for the non-business members (Eqs. 23-31, Table 7)
+    #Lorenzo Giannuzzo: three-phase CACER allocation of the MILP revenue: the whole incentive above the 55% threshold
+    # is reserved for the non-business members, and the administrative fee is charged to the ordinary quota
+    # (Eqs. 23-31, Table 7)
     m1 = SC["MILP"]
     rho = m1["rho"]; theta = max(0.0, 1.0 - C.RHO_STAR / rho)
     entity = m1["rid"] + C.ALPHA * m1["inc"]
     dist = (1 - C.ALPHA) * m1["inc"] + m1["arera"]
-    sur = theta * (1 - C.ALPHA) * m1["inc"]; ordq = dist - sur
+    sur = theta * m1["inc"]; ordq = dist - sur
     Ecat = {k: v.sum() for k, v in CATS.items()}
     Eall = sum(Ecat.values()); Enb = sum(Ecat[k] for k in NON_BUSINESS)
     alloc = {k: dict(ordinary=ordq * Ecat[k] / Eall, surplus=(sur * Ecat[k] / Enb if k in NON_BUSINESS else 0.0))

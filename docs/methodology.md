@@ -82,9 +82,9 @@ drives the dispatch.
 | Eq. 38 – MLP 10-256-128-64-1, ReLU, Adam, L2 penalty 1e-3, early stopping | `forecasting.make_mlp` |
 | Rolling-origin validation with expanding window and monthly retraining (January–September 2025 out-of-sample) | `operation.run` |
 | Eqs. 39–41 – R², RMSE, MAPE; naive benchmarks (previous day, previous week) | `R["mlp_oos"]`, `R["naive24_res_oos"]`, `R["naive_res_oos"]` |
-| Eq. 42 – peak-timing error | `R["peak_timing"]`, `R["peak_timing_evening"]` |
+| Eq. 42 – peak-timing error of the MLP and of the previous-day persistence | `R["peak_timing"]`, `R["peak_timing_evening"]`, `R["peak_timing_naive24"]` |
 | Eq. 33, Table 9, Fig. 9 – out-of-sample kernel SHAP (306 hours) in kWh of community demand | `R["shap"]` |
-| Section 2.5, Table 10 – perfect-foresight MILP vs forecast-based plans applied open-loop to the measured loads (A: residential forecast, non-residential measured; B: all users forecast; C: seasonal-naive forecast for all users) | `R["pf"]`, `R["plans"]` |
+| Section 2.5, Table 10 – perfect-foresight MILP vs day-ahead plans (24-hour MILP solved every day on the forecast demand, starting from the SOC actually reached) applied open-loop to the measured loads (A: residential forecast, non-residential measured; B: all users forecast; C: seasonal-naive forecast for all users); gap also expressed as a share of the value added by the BESS over the no-BESS revenue | `R["pf"]`, `R["plans"]`, `R["nobess_gross"]` |
 | Share of hours in which the shared energy is bounded by the injection | `R["pf_demand_limited"]` |
 
 ### Step 4 – Complementary quantities (`extras.py`)
@@ -116,8 +116,12 @@ Every figure is saved as PNG and as vector PDF at 500 dpi.
 - **Virtual model.** The shared energy is computed ex post as the hourly minimum between injection and withdrawal of
   the whole configuration, and the RID remunerates all the injected energy; no physical self-consumption is assumed.
 - **No grid charging.** The battery is charged only by the PV plant (Eq. 17), in line with the TIAD.
-- **Open-loop operation.** The forecast-based plan is computed once over the out-of-sample period and applied without
-  re-optimization; the physical SOC limits are enforced during the realization (`models.realize`).
+- **Day-ahead, open-loop operation.** Every day the MILP is solved over the next 24 hours on the forecast demand, with
+  the day-ahead zonal prices and the SOC actually reached at the end of the previous day; the plan is applied to the
+  measured loads without intra-day re-optimization, enforcing the physical SOC limits (`models.realize`). PV generation
+  is taken as known, so that the test isolates the effect of the demand forecast.
+- **Benefit allocation.** The whole incentive above the 55% threshold is reserved for the non-business members
+  (Eq. 29), and the 10% administrative fee is charged to the ordinary quota.
 - **Degradation.** The PV output decreases by 0.5% per year; the usable capacity of the battery decreases linearly with
   the cumulative throughput, reaching 80% at 8000 equivalent full cycles. Degradation enters the DCF but not the
   dispatch objective.

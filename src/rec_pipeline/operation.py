@@ -87,6 +87,15 @@ def run(inp, paths, log=print):
     hp2 = ev.groupby("day").apply(lambda g: g.h.values[g.p.values.argmax()])
     e2 = np.abs(hy2 - hp2)
     R["peak_timing_evening"] = dict(mean_h=float(e2.mean()), within1=float(100 * (e2 <= 1).mean()))
+    #Lorenzo Giannuzzo: same metric for the persistence of the previous day, as a benchmark
+    nv = (np.r_[y_raw[:24], y_raw[:-24]] * C.K_SCALE)[oos]
+    dn = pd.DataFrame({"t": ts[oos], "y": yt, "p": nv}); dn["day"] = dn.t.dt.date; dn["h"] = dn.t.dt.hour
+    hn = dn.groupby("day").apply(lambda g: g.h.values[g.p.values.argmax()])
+    en = np.abs(hy - hn); en = np.minimum(en, 24 - en)
+    evn = dn[dn.h >= 16]
+    hn2 = evn.groupby("day").apply(lambda g: g.h.values[g.p.values.argmax()])
+    R["peak_timing_naive24"] = dict(mean_h=float(en.mean()), within1=float(100 * (en <= 1).mean()),
+                                    evening_mean_h=float(np.abs(hy2 - hn2).mean()))
 
     S = np.vstack(shap_rows); SX = np.vstack(shap_X)
     R["shap"] = {f: float(np.abs(S[:, i]).mean()) for i, f in enumerate(FEATURES)}
@@ -94,9 +103,10 @@ def run(inp, paths, log=print):
              shap=S, shapX=SX)
 
     #Lorenzo Giannuzzo: EMS robustness test on the out-of-sample hours (January-September 2025, positions 0-6551 of
-    # the simulated year): perfect-foresight MILP against forecast-based plans applied open-loop to the measured loads,
-    # with the residential load forecast by the MLP and the non-residential loads measured (A) or forecast by the
-    # seasonal-naive predictor (B), and with all users forecast by the seasonal-naive predictor (C)
+    # the simulated year): perfect-foresight MILP over the whole period against day-ahead plans applied open-loop to
+    # the measured loads, with the residential load forecast by the MLP and the non-residential loads measured (A) or
+    # forecast by the seasonal-naive predictor (B), and with all users forecast by the seasonal-naive predictor (C);
+    # PV generation and day-ahead zonal prices are taken as known
     log(">>> EMS robustness test")
     T = 6552
     assert np.allclose(inp.cats["Residential"][:T], inp.cats_chrono["Residential"][2208:])
@@ -111,16 +121,29 @@ def run(inp, paths, log=print):
     pf = milp(pv, dem, pz, tip)
     pf_e = econ(pv - pf["pc"] + pf["pd"], dem, pz, tip)
     R["pf"] = dict(gross=pf_e["gross"], shared=pf_e["shared_MWh"], time=pf["time"])
+    nob = econ(pv.copy(), dem, pz, tip)
+    R["nobess_gross"] = nob["gross"]
     plans = {"A": res_fc + nonres_meas, "B": res_fc + nonres_naive, "C": res_naive + nonres_naive}
     R["plans"] = {}
     mon = inp.ts_sim[:T].month
     for k, dem_fc in plans.items():
-        pl = milp(pv, dem_fc, pz, tip)
-        exp_e = econ(pv - pl["pc"] + pl["pd"], dem_fc, pz, tip)
-        real = realize(pv, dem, pz, tip, pl["pc"], pl["pd"])
-        R["plans"][k] = dict(expected=exp_e["gross"], realized=real["gross"], shared=real["shared_MWh"],
+        #Lorenzo Giannuzzo: day-ahead planning: at the end of each day the MILP is solved over the 24 hours of the next
+        # day on the forecast demand, with the day-ahead zonal prices and the SOC actually reached, and the plan is
+        # then applied open-loop to the measured demand of that day
+        soc = C.SOC0 * C.E_NOM; inj = np.zeros(T); pc_p = np.zeros(T); pd_p = np.zeros(T); expected = 0.0
+        for d in range(T // 24):
+            a, b = 24 * d, 24 * (d + 1)
+            pl = milp(pv[a:b], dem_fc[a:b], pz[a:b], tip[a:b], soc0=soc / C.E_NOM)
+            pc_p[a:b], pd_p[a:b] = pl["pc"], pl["pd"]
+            expected += econ(pv[a:b] - pl["pc"] + pl["pd"], dem_fc[a:b], pz[a:b], tip[a:b])["gross"]
+            day = realize(pv[a:b], dem[a:b], pz[a:b], tip[a:b], pl["pc"], pl["pd"], soc0=soc / C.E_NOM)
+            inj[a:b] = day["inj"]
+            soc = day["soc_end"]
+        real = econ(inj, dem, pz, tip)
+        R["plans"][k] = dict(expected=expected, realized=real["gross"], shared=real["shared_MWh"],
                              gap=100 * (pf_e["gross"] - real["gross"]) / pf_e["gross"],
-                             gap_expected=100 * (pf_e["gross"] - exp_e["gross"]) / pf_e["gross"],
+                             gap_expected=100 * (pf_e["gross"] - expected) / pf_e["gross"],
+                             gap_storage_value=100 * (pf_e["gross"] - real["gross"]) / (pf_e["gross"] - nob["gross"]),
                              demand_r2=float(r2_score(dem, dem_fc)),
                              demand_mape=float(100 * np.mean(np.abs(dem - dem_fc) / dem)))
         hr_pf = pf_e["sh"] * (tip + C.ARERA_VALORIZATION) / 1e3 + pf_e["inj"] * pz / 1e3

@@ -72,4 +72,4 @@ def realize(pv, dem, pz, tip, pc_plan, pd_plan, e_nom=C.E_NOM, soc0=C.SOC0):
         dis = min(pd_plan[t], (soc - C.SOC_MIN * e_nom) * C.ETA)
         ch = min(pc_plan[t], (C.SOC_MAX * e_nom - soc) / C.ETA, pv[t])
         inj[t] = max(0.0, pv[t] - ch + dis); soc += ch * C.ETA - dis / C.ETA; pd_r[t] = dis
-    return econ(inj, dem, pz, tip) | {"discharge": pd_r}
+    return econ(inj, dem, pz, tip) | {"discharge": pd_r, "soc_end": soc}

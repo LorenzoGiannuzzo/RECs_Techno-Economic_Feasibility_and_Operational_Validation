@@ -13,14 +13,14 @@ reproduces the published values exactly. The main ones are:
 | NPV, IRR, payback (no-BESS) | 1 083 758 €, 16.4%, 6.6 years | Table 6 |
 | NPV, IRR, payback (MILP) | 955 707 €, 12.7%, 8.5 years | Table 6 |
 | Break-even BESS cost of MILP vs no-BESS | 210 €/kWh | Section 4.2 |
-| Surplus fraction θ and surplus quota | 0.340, 40 685 €/yr | Table 7 |
+| Surplus fraction θ and surplus quota | 0.340, 45 205 €/yr | Table 7 |
 | Cluster sizes (days) | 224 / 92 / 49 | Section 4.3, Fig. 7 |
 | Classifier accuracy, macro F1, end-to-end RMSE | 91.78%, 88.85%, 0.1113 | Section 4.3 |
 | MLP out-of-sample R², RMSE, MAPE | 0.712, 66.8 kWh, 17.1% | Section 4.3 |
 | Random-split R² (same model) | 0.792 | Section 4.3 |
 | Naive R² (previous day / previous week) | 0.593 / 0.444 | Section 4.3 |
-| Revenue gap, plans A / B / C | 0.43% / 0.75% / 0.86% | Table 10 |
-| Demand-limited hours (perfect foresight) | 62.1% | Section 5.4 |
+| Revenue gap, plans A / B / C | 0.53% / 0.83% / 0.93% | Table 10 |
+| Injection-bounded hours with PV production (perfect foresight) | 62.1% | Sections 4.4, 5.4 |
 
 The complete set of values is stored in the JSON files of `results/`, which can be compared with a new run, e.g.
 
@@ -50,7 +50,7 @@ On a laptop CPU, the full run takes about 4 minutes:
 |---|---|---|
 | 1 – design | ~1.5 min | 21 annual MILP solutions (about 4 s each): the design scenario and the 20 years with degradation |
 | 2 – clustering | ~10 s | validity indices for 13 values of k |
-| 3 – operation | ~1.5 min | nine MLP trainings, kernel SHAP, four MILP solutions over 6552 hours |
+| 3 – operation | ~1.5 min | nine MLP trainings, kernel SHAP, one MILP over 6552 hours and 819 daily MILPs |
 | 4 – extras | ~10 s | one MLP training |
 | 5 – figures | ~30 s | rendering at 500 dpi |
 
