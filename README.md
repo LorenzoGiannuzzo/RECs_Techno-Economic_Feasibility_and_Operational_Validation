@@ -6,6 +6,11 @@ Code and public data of the paper
 > Renewable Energy Community in Southern Italy: From Simulation to Machine-Learning-Driven Operation*, Sustainable
 > Energy Technologies and Assessments (under review, manuscript SETA-D-26-06491).
 
+The work was mainly carried out by Francesco Aretano (francescoaretano3@gmail.com), who developed the original
+simulation, optimization, and machine-learning models in his master's thesis, and was then refined and extended by
+Lorenzo Giannuzzo (lorenzo.giannuzzo@polito.it), who restructured the code into the published pipeline and carried
+out the revised analyses of the paper.
+
 The repository reproduces every numerical result, table, and figure of the paper: four BESS dispatch strategies under
 the Italian CACER incentive scheme (no storage, rule-based self-consumption, price-driven arbitrage, and MILP
 optimization), a 20-year discounted cash flow analysis with asset degradation, the allocation of the benefits among
@@ -195,4 +200,5 @@ L. Giannuzzo, F.D. Minuto, and A. Lanzini carried out this work within the proje
 Transition – NEST" (project code PE0000021, CUP E13C22001890001), funded under the National Recovery and Resilience
 Plan (NRRP), Mission 4, Component 2, Investment 1.3, by the European Union – NextGenerationEU.
 
-Contact: Lorenzo Giannuzzo, Energy Center Lab, Politecnico di Torino – lorenzo.giannuzzo@polito.it
+Contacts: Francesco Aretano – francescoaretano3@gmail.com; Lorenzo Giannuzzo, Energy Center Lab, Politecnico di
+Torino – lorenzo.giannuzzo@polito.it

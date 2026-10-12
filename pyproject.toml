@@ -10,8 +10,8 @@ readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
 authors = [
+  { name = "Francesco Aretano", email = "francescoaretano3@gmail.com" },
   { name = "Lorenzo Giannuzzo", email = "lorenzo.giannuzzo@polito.it" },
-  { name = "Francesco Aretano" },
   { name = "Francesco Demetrio Minuto" },
   { name = "Andrea Lanzini" },
 ]

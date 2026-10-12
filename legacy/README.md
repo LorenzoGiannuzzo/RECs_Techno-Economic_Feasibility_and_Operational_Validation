@@ -1,7 +1,7 @@
 # Legacy thesis scripts (archive)
 
-This folder keeps the original scripts of the master's thesis from which the paper originates, for transparency and
-traceability. **They are not needed to reproduce the paper**, which is entirely reproduced by `src/rec_pipeline/`, and
+This folder keeps the original scripts of the master's thesis of Francesco Aretano (francescoaretano3@gmail.com), from
+which the paper originates, for transparency and traceability. **They are not needed to reproduce the paper**, which is entirely reproduced by `src/rec_pipeline/`, and
 they are not maintained.
 
 ## Status

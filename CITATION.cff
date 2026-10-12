@@ -6,12 +6,13 @@ date-released: 2026-10-09
 license: MIT
 repository-code: "https://github.com/LorenzoGiannuzzo/RECs_Techno-Economic_Feasibility_and_Operational_Validation"
 authors:
+  - family-names: Aretano
+    given-names: Francesco
+    email: francescoaretano3@gmail.com
+    affiliation: "Energy Center Lab and Department of Energy (DENERG), Politecnico di Torino"
   - family-names: Giannuzzo
     given-names: Lorenzo
     email: lorenzo.giannuzzo@polito.it
-    affiliation: "Energy Center Lab and Department of Energy (DENERG), Politecnico di Torino"
-  - family-names: Aretano
-    given-names: Francesco
     affiliation: "Energy Center Lab and Department of Energy (DENERG), Politecnico di Torino"
   - family-names: Minuto
     given-names: Francesco Demetrio
