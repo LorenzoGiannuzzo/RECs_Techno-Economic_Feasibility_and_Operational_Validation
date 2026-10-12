@@ -3,7 +3,7 @@
 Code and public data of the paper
 
 > L. Giannuzzo, F. Aretano, F.D. Minuto, A. Lanzini, *Techno-Economic Feasibility and Operational Assessment of a
-> Renewable Energy Community in Southern Italy: From Simulation to Machine Learning-Driven Operation*, Sustainable
+> Renewable Energy Community in Southern Italy: From Simulation to Machine-Learning-Driven Operation*, Sustainable
 > Energy Technologies and Assessments (under review, manuscript SETA-D-26-06491).
 
 The repository reproduces every numerical result, table, and figure of the paper: four BESS dispatch strategies under
