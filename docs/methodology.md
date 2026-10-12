@@ -69,7 +69,7 @@ by the solver equals the hourly minimum of Eq. 1 and that charging and dischargi
 | Eqs. 43–44 – Silhouette and Davies–Bouldin indices for K = 2–15 (K = 2 only separates the summer days; K = 3 is the best partition with at least three clusters) | `R["validity"]` |
 | Fig. 7 – three demand archetypes and intra-cluster RMSE | `R["clusters"]`, `figures.py` |
 | Eq. 32 – random forest (100 trees, minimum 5 samples per leaf, 80/20 random split of the days) on daily temperatures and day of the week; five-fold cross-validation with the days of each archetype in chronological order | `R["classifier"]` |
-| End-to-end RMSE between the real profile and the centroid of the predicted class | `R["classifier"]["end_to_end_rmse"]` |
+| End-to-end RMSE between the real profile and the centroid of the predicted class, aggregated over the days as the intra-cluster RMSE | `R["classifier"]["end_to_end_rmse"]` |
 | Table 8 – Gini importance of the classifier features | `R["feature_importance"]` |
 
 The clustering and the classifier characterize the residential demand; their output does not enter the forecast that
@@ -92,7 +92,7 @@ drives the dispatch.
 
 Random 70/30 split of the hourly samples with the same forecaster (optimistic benchmark, also evaluated on its test hours of January–September), repetition of the rolling-origin validation and of plan B with five further seeds, solve time of the 24-hour
 MILP of a receding-horizon implementation, revenue gap of the critical week of August, present value of the RID
-increment of MILP against the additional cost of the battery, and statistics of the zonal prices behind the arbitrage
+increment of MILP against the additional cost of the battery, NPV of the whole community, split of the revenue lost in open-loop operation between the members and the investing entity, and statistics of the zonal prices behind the arbitrage
 thresholds.
 
 ### Step 5 – Figures (`figures.py`)

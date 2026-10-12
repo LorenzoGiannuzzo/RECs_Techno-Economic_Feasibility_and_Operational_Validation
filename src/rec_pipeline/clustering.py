@@ -65,7 +65,8 @@ def run(inp, paths, log=print):
     X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2, random_state=C.SEED)
     clf = RandomForestClassifier(n_estimators=100, min_samples_leaf=5, random_state=C.SEED).fit(X_tr, y_tr)
     y_pred = clf.predict(X_te)
-    e2e = np.mean([np.sqrt(np.mean((V[i] - cent[p]) ** 2)) for i, p in zip(X_te.index, y_pred)])
+    #Lorenzo Giannuzzo: end-to-end RMSE aggregated over the days as the intra-cluster RMSE (root of the mean squared error)
+    e2e = np.sqrt(np.mean([np.mean((V[i] - cent[p]) ** 2) for i, p in zip(X_te.index, y_pred)]))
     cv = cross_val_score(clf, X, y, cv=5, scoring="accuracy")
     R["classifier"] = dict(accuracy=100 * accuracy_score(y_te, y_pred),
                            f1_macro=100 * f1_score(y_te, y_pred, average="macro"),

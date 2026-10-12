@@ -15,9 +15,11 @@ reproduces the published values exactly. The main ones are:
 | Break-even BESS cost of MILP vs no-BESS | 210 €/kWh | Section 4.2 |
 | NPV with zonal prices −20% / +20% (no-BESS) | 667 263 / 1 500 254 € | Section 4.2 |
 | NPV with zonal prices −20% / +20% (MILP) | 506 265 / 1 411 578 € | Section 4.2 |
+| NPV of the whole community (all revenue streams), no-BESS / MILP | 2 871 149 / 2 933 590 € | Section 5.3 |
+| Revenue lost by plan B: incentive and valorization / RID | 1891 / 253 € | Section 5.4 |
 | Surplus fraction θ and surplus quota | 0.340, 45 205 €/yr | Table 7 |
 | Cluster sizes (days) | 224 / 92 / 49 | Section 4.3, Fig. 7 |
-| Classifier accuracy, macro F1, end-to-end RMSE | 91.78%, 88.85%, 0.1113 | Section 4.3 |
+| Classifier accuracy, macro F1, end-to-end RMSE | 91.8%, 88.9%, 0.116 | Section 4.3 |
 | Classifier five-fold cross-validation accuracy (folds in chronological order within each archetype) | 89.0% | Section 4.3 |
 | MLP out-of-sample R², RMSE, MAPE | 0.726, 65.1 kWh, 16.6% | Section 4.3 |
 | Out-of-sample R² and gap of plan B with five further seeds | 0.715–0.720, 0.83–0.85% | Sections 4.3, 4.4 |

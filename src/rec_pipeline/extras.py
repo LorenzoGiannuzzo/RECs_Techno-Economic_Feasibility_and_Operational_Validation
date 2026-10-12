@@ -82,6 +82,25 @@ def run(inp, paths, log=print):
     X["burden"] = C.E_NOM * C.C_BESS + X["extra_opex_pv"]
     X["cpu"] = _cpu_name()
 
+    #Lorenzo Giannuzzo: NPV from the perspective of the whole community, in which all the revenue streams (RID,
+    # incentive tariff, and ARERA valorization) are discounted against the same CAPEX and OPEX (Section 5.3)
+    X["npv_community"] = {}
+    for name, yr in R["yearly"].items():
+        gross = np.array([y["gross"] for y in yr])
+        X["npv_community"][name] = float(((gross - R["dcf"][name]["opex"]) / disc).sum() - R["dcf"][name]["capex"])
+
+    #Lorenzo Giannuzzo: split of the revenue lost in open-loop operation between the incentive and valorization
+    # streams redistributed to the members and the RID revenue of the investing entity (Section 5.4)
+    X["loss_split"] = {}
+    for k in "ABC":
+        P = np.load(out / f"plan_{k}.npz")
+        inc = float(((P["pf_sh"] - P["real_sh"]) * (inp.tip[:6552] + C.ARERA_VALORIZATION) / 1e3).sum())
+        tot = float((P["hr_pf"] - P["hr_rl"]).sum())
+        X["loss_split"][k] = dict(total=tot, incentive_arera=inc, rid=tot - inc,
+                                  shared_drop_pct=float(100 * (P["pf_sh"].sum() - P["real_sh"].sum()) / P["pf_sh"].sum()))
+    P = np.load(out / "plan_B.npz")
+    X["rid_pf_period"] = float((P["hr_pf"] - P["pf_sh"] * (inp.tip[:6552] + C.ARERA_VALORIZATION) / 1e3).sum())
+
     #Lorenzo Giannuzzo: statistics of the 2025 South-zone prices behind the arbitrage thresholds of Eq. 6
     pz = inp.pz; hrs = np.arange(C.HOURS) % 24
     X["p125_share"] = float(100 * (pz >= C.ARB_PRICE_ANY_HOUR).mean())
