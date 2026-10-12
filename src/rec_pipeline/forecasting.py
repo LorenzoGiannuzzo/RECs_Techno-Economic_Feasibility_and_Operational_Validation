@@ -49,23 +49,25 @@ def build(inp):
     return ForecastData(ts=ts, y=y, X=X, r=y / day_mean, day_mean=day_mean, valid=~np.isnan(X).any(1))
 
 
-def make_mlp():
+def make_mlp(seed=C.SEED):
     """MLP regressor of Section 2.4 (architecture 10-256-128-64-1, Adam, L2 penalty 1e-3); early stopping is handled
     by fit_chrono on a chronological validation set."""
     return MLPRegressor(hidden_layer_sizes=(256, 128, 64), activation="relu", solver="adam", alpha=1e-3,
-                        learning_rate_init=1e-3, random_state=C.SEED)
+                        learning_rate_init=1e-3, random_state=seed)
 
 
-def fit_chrono(X, y, val_fraction=0.1, max_epochs=400, patience=20, tol=1e-4):
+def fit_chrono(X, y, val_fraction=0.1, max_epochs=400, patience=20, tol=1e-4, seed=C.SEED):
     """Training with early stopping on the last part of the training window, in chronological order.
 
     The rows of X are in time order: the first (1 - val_fraction) of them train the network, the remaining ones form
     the validation set; training stops after `patience` epochs without an improvement of the validation loss larger
-    than `tol`, and the weights of the best epoch are restored.
+    than `tol`, and the number of epochs of the best validation loss is retained. The network is then retrained from
+    the same initialization on the whole window for that number of epochs, so that the most recent hours, which are
+    the most informative for the forecast, also contribute to the fitted weights.
     """
     k = int(round(len(y) * (1 - val_fraction)))
     Xt, yt, Xv, yv = X[:k], y[:k], X[k:], y[k:]
-    mlp = make_mlp()
+    mlp = make_mlp(seed)
     best, best_loss, wait, best_ep = None, np.inf, 0, 0
     for ep in range(max_epochs):
         mlp.partial_fit(Xt, yt)
@@ -77,6 +79,8 @@ def fit_chrono(X, y, val_fraction=0.1, max_epochs=400, patience=20, tol=1e-4):
             wait += 1
             if wait >= patience:
                 break
-    mlp.coefs_, mlp.intercepts_ = best
-    mlp.best_epoch_ = best_ep
-    return mlp
+    final = make_mlp(seed)
+    for _ in range(max(best_ep, 1)):
+        final.partial_fit(X, y)
+    final.best_epoch_ = best_ep
+    return final

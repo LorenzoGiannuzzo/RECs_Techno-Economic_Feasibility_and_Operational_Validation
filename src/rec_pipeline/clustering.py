@@ -72,6 +72,7 @@ def run(inp, paths, log=print):
                            recall_macro=100 * recall_score(y_te, y_pred, average="macro"),
                            precision_macro=100 * precision_score(y_te, y_pred, average="macro"),
                            cv5_accuracy_mean=float(100 * cv.mean()), cv5_accuracy_std=float(100 * cv.std()),
+                           cv5_accuracy_folds=[float(100 * a) for a in cv],
                            end_to_end_rmse=float(e2e), n_test=int(len(y_te)),
                            confusion_matrix=confusion_matrix(y_te, y_pred).tolist())
     imp = pd.Series(clf.feature_importances_, index=X.columns).sort_values(ascending=False)

@@ -80,6 +80,7 @@ P_DC = 1037.0
 C_PV = 800.0
 C_BESS = 350.0
 SENS_COSTS = [150, 250, 350, 450, 550]
+EXTRA_SEEDS = [0, 1, 2, 3, 4]  # further seeds of the robustness check of the forecaster
 PRICE_SENS = [0.8, 1.2]  # scaling factors of the zonal prices in the price sensitivity
 OPEX_PCT = 1.5
 RATE = 0.04

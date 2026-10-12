@@ -19,12 +19,14 @@ reproduces the published values exactly. The main ones are:
 | Cluster sizes (days) | 224 / 92 / 49 | Section 4.3, Fig. 7 |
 | Classifier accuracy, macro F1, end-to-end RMSE | 91.78%, 88.85%, 0.1113 | Section 4.3 |
 | Classifier five-fold cross-validation accuracy (folds in chronological order within each archetype) | 89.0% | Section 4.3 |
-| MLP out-of-sample R², RMSE, MAPE | 0.710, 67.0 kWh, 17.1% | Section 4.3 |
-| Random-split R² (same model) | 0.783 | Section 4.3 |
+| MLP out-of-sample R², RMSE, MAPE | 0.726, 65.1 kWh, 16.6% | Section 4.3 |
+| Out-of-sample R² and gap of plan B with five further seeds | 0.715–0.720, 0.83–0.85% | Sections 4.3, 4.4 |
+| Random-split R² (same model), all test hours / January–September | 0.778 / 0.764 | Section 4.3 |
 | Naive R² (previous day / previous week) | 0.593 / 0.444 | Section 4.3 |
-| Peak-timing error, MLP / previous-day persistence | 2.1 h / 2.3 h | Section 4.3 |
-| Revenue gap, plans A / B / C | 0.54% / 0.84% / 0.93% | Table 10 |
-| Injection-bounded hours with PV production (perfect foresight) | 62.1% | Sections 4.4, 5.4 |
+| Peak-timing error, MLP / previous-day persistence | 1.9 h / 2.3 h | Section 4.3 |
+| Revenue gap, daily perfect foresight / plans A / B / C | 0.12% / 0.55% / 0.82% / 0.93% | Table 10 |
+| Injection-bounded hours with PV production (perfect foresight), by hours / by injected energy | 62.1% / 42.8% | Sections 4.4, 5.4 |
+| Hours with injection in which the forecast changes the bounding term (plan B), all / 17:00–21:00 | 12.8% / 0% | Sections 4.4, 5.4 |
 
 The complete set of values is stored in the JSON files of `results/`, which can be compared with a new run, e.g.
 
@@ -48,14 +50,14 @@ old = json.load(open("results/results_design.json"))   # published
 
 ## Run time
 
-On a laptop CPU, the full run takes about 8 minutes:
+On a laptop CPU, the full run takes about 10 minutes:
 
 | Step | Time | Dominant cost |
 |---|---|---|
 | 1 – design | ~4.5 min | 61 annual MILP solutions (about 4 s each): the design scenario, the 20 years with degradation, and the 20 years of each of the two price levels of the price sensitivity |
 | 2 – clustering | ~10 s | validity indices for 14 values of k |
-| 3 – operation | ~1.5 min | nine MLP trainings, kernel SHAP, one MILP over 6552 hours and 819 daily MILPs |
-| 4 – extras | ~10 s | one MLP training |
+| 3 – operation | ~1.5 min | nine MLP trainings, kernel SHAP, one MILP over 6552 hours and 1092 daily MILPs |
+| 4 – extras | ~1.5 min | one MLP training and five repetitions of the rolling-origin validation with 273 daily MILPs each |
 | 5 – figures | ~30 s | rendering at 500 dpi |
 
 ## Troubleshooting

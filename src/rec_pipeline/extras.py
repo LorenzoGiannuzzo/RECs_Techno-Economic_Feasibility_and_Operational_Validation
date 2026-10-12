@@ -12,6 +12,7 @@ from sklearn.model_selection import train_test_split
 from . import config as C
 from .forecasting import build, fit_chrono
 from .models import milp
+from .operation import NON_RES, day_ahead, rolling_forecast
 
 
 def _cpu_name():
@@ -39,6 +40,22 @@ def run(inp, paths, log=print):
     fc = lambda i: (mlp.predict(Xs[i]) * rs + rm) * F.day_mean[i]
     X["random_split_r2_test"] = float(r2_score(F.y[idx_te], fc(idx_te)))
     X["random_split_r2_train"] = float(r2_score(F.y[idx_tr], fc(idx_tr)))
+    oos_te = idx_te[F.ts[idx_te] >= "2025-01-01"]
+    X["random_split_r2_test_jan_sep"] = float(r2_score(F.y[oos_te], fc(oos_te)))
+
+    #Lorenzo Giannuzzo: sensitivity of the rolling-origin forecaster and of the robustness test (plan B) to the random
+    # initialization of the network, over five further seeds
+    T = 6552; week = lambda v: np.r_[v[:168], v[:-168]]
+    nonres_naive = sum(week(inp.cats_chrono[k])[2208:] for k in NON_RES)
+    pv, dem, pz, tip = inp.pv[:T], inp.dem[:T], inp.pz[:T], inp.tip[:T]
+    ops = json.load(open(out / "results_ops.json")); pf = ops["pf"]["gross"]
+    X["seeds"] = {}
+    for seed in C.EXTRA_SEEDS:
+        pred, _, _, _ = rolling_forecast(F, seed=seed)
+        oos = ~np.isnan(pred)
+        _, real = day_ahead(pv, dem, pz, tip, (pred * C.K_SCALE)[2208:] + nonres_naive)
+        X["seeds"][str(seed)] = dict(r2=float(r2_score(F.y[oos], pred[oos])), gap_B=100 * (pf - real["gross"]) / pf)
+        log(f"    seed {seed}: R2 {X['seeds'][str(seed)]['r2']:.3f}, gap B {X['seeds'][str(seed)]['gap_B']:.2f}%")
 
     #Lorenzo Giannuzzo: solve time of the 24-hour MILP of a receding-horizon implementation (four sample days)
     times = []

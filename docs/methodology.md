@@ -80,17 +80,17 @@ drives the dispatch.
 | Paper | Implementation |
 |---|---|
 | Eqs. 34–37 – day-ahead inputs: cyclic hour and day of the week, non-working-day indicator, outdoor temperature and its change over 24 h, load 24, 48, and 168 h before normalized by the mean load of the previous day; target: ratio to the previous-day mean | `forecasting.build` |
-| Eq. 38 – MLP 10-256-128-64-1, ReLU, Adam, L2 penalty 1e-3, early stopping (patience 20, at most 400 epochs) on the last 10% of the training window in chronological order | `forecasting.make_mlp`, `forecasting.fit_chrono` |
+| Eq. 38 – MLP 10-256-128-64-1, ReLU, Adam, L2 penalty 1e-3, early stopping (patience 20, at most 400 epochs) on the last 10% of the training window in chronological order, then retraining on the whole window for the selected number of epochs | `forecasting.make_mlp`, `forecasting.fit_chrono` |
 | Rolling-origin validation with expanding window and monthly retraining (January–September 2025 out-of-sample) | `operation.run` |
 | Eqs. 39–41 – R², RMSE, MAPE; naive benchmarks (previous day, previous week) | `R["mlp_oos"]`, `R["naive24_res_oos"]`, `R["naive_res_oos"]` |
 | Eq. 42 – peak-timing error of the MLP and of the previous-day persistence | `R["peak_timing"]`, `R["peak_timing_evening"]`, `R["peak_timing_naive24"]` |
 | Eq. 33, Table 9, Fig. 9 – out-of-sample kernel SHAP (306 hours) in kWh of community demand | `R["shap"]` |
-| Section 2.5, Table 10 – perfect-foresight MILP vs day-ahead plans (24-hour MILP solved every day on the forecast demand, starting from the SOC actually reached) applied open-loop to the measured loads (A: residential forecast, non-residential measured; B: all users forecast; C: seasonal-naive forecast for all users); gap also expressed as a share of the value added by the BESS over the no-BESS revenue | `R["pf"]`, `R["plans"]`, `R["nobess_gross"]` |
+| Section 2.5, Table 10 – perfect-foresight MILP over the whole period and daily perfect foresight (same 24-hour problems on the measured loads), vs day-ahead plans (24-hour MILP solved every day on the forecast demand, starting from the SOC reached at the end of the previous day, without terminal condition) applied open-loop to the measured loads (A: residential forecast, non-residential measured; B: all users forecast; C: seasonal-naive forecast for all users); gap also expressed as a share of the value added by the BESS over the no-BESS revenue | `R["pf"]`, `R["pf_daily"]`, `R["plans"]`, `R["nobess_gross"]` |
 | Share of hours in which the shared energy is bounded by the injection | `R["pf_demand_limited"]` |
 
 ### Step 4 – Complementary quantities (`extras.py`)
 
-Random 70/30 split of the hourly samples with the same forecaster (optimistic benchmark), solve time of the 24-hour
+Random 70/30 split of the hourly samples with the same forecaster (optimistic benchmark, also evaluated on its test hours of January–September), repetition of the rolling-origin validation and of plan B with five further seeds, solve time of the 24-hour
 MILP of a receding-horizon implementation, revenue gap of the critical week of August, present value of the RID
 increment of MILP against the additional cost of the battery, and statistics of the zonal prices behind the arbitrage
 thresholds.

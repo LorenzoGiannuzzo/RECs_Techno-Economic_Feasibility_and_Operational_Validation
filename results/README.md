@@ -8,8 +8,8 @@ field and [`docs/reproducibility.md`](../docs/reproducibility.md) for the main e
 |---|---|---|
 | `results_design.json` | 1 – design | input totals; monthly PV synthesis (Table 3); scenarios with shared energy, revenues, VSC by category, and cycles (Tables 4–5); MILP size and ex-post checks; DCF with and without degradation (Table 6); BESS cost sensitivity and break-even cost (Fig. 6); sensitivity to the level of the zonal prices; yearly results; CACER allocation (Table 7) |
 | `results_clustering.json` | 2 – clustering | Silhouette and Davies–Bouldin indices for K = 2–15; size, RMSE, peak hour, and composition of each cluster (Fig. 7); classifier metrics, including the five-fold cross-validation, and confusion matrix; feature importance (Table 8) |
-| `results_ops.json` | 3 – operation | rolling-origin folds; out-of-sample metrics of the MLP and of the naive benchmarks; peak-timing error; mean absolute SHAP values (Table 9); robustness test with perfect foresight and plans A, B, C, including monthly gaps (Table 10) |
-| `extra.json` | 4 – extras | random-split benchmark; solve time of the 24-hour MILP; critical-week and weekly gaps of August; present value of the MILP revenue increment; price statistics |
+| `results_ops.json` | 3 – operation | rolling-origin folds; out-of-sample metrics of the MLP and of the naive benchmarks; peak-timing error; mean absolute SHAP values (Table 9); robustness test with perfect foresight, daily perfect foresight, and plans A, B, C, including monthly gaps, hours in which the forecast changes the bounding term, monthly PV surplus and charged energy (Table 10) |
+| `extra.json` | 4 – extras | random-split benchmark; robustness to five further seeds; solve time of the 24-hour MILP; critical-week and weekly gaps of August; present value of the MILP revenue increment; price statistics |
 | `critical_week.json` | 5 – figures | week shown in Fig. 10 and its shared-energy gap |
 
 The hourly intermediate outputs (`*.npz`) are written to this folder by every run but are not distributed, since they
